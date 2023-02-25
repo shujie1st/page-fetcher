@@ -6,19 +6,19 @@ const readline = require('readline');
 let URL = process.argv[2];
 let localFilePath = process.argv[3];
 
-
 request(URL, (error, response, body) => {
   
-  // if URL results in error, print error and terminate app
-  if (error) {
-    console.log(error);
+  // if URL results in error
+  // or response statuscode is not in the range of sucessful response (200-299)
+  // print message to let user know and terminate app
+  if (error || response.statusCode < 200 || response.statusCode > 299) {
+    console.log("Something went wrong");
     return;
   }
 
   console.log('statusCode:', response && response.statusCode);
-  console.log('body:', body);
-
-  let wrtieFile = function() {
+ 
+  let writeFile = function() {
     fs.writeFile(localFilePath, body, (error) => {
     // Print error with writing file (e.g., invalid flie path)
       if (error) {
@@ -32,7 +32,7 @@ request(URL, (error, response, body) => {
 
   // download the resources if local file not exist
   if (!fs.existsSync(localFilePath)) {
-    wrtieFile();
+    writeFile();
   } else {
 
     // create interface for input and output
@@ -41,7 +41,7 @@ request(URL, (error, response, body) => {
     // if file path already exists, user will be asked to type in "Y" or "N" to overwrite file or skip
     rl.question("File already exists! Please type in 'Y' + 'Enter' to overwrite the file! Or type in 'N' + 'Enter' to exit.", (answer) => {
       if (answer === "Y") {
-        wrtieFile();
+        writeFile();
       } else if (answer === "N") {
         console.log(`No change to the original file ${localFilePath}!`);
       }
