@@ -9,9 +9,9 @@ let localFilePath = process.argv[3];
 request(URL, (error, response, body) => {
   
   // if URL results in error
-  // or response statuscode is not in the range of sucessful response (200-299)
+  // or response statuscode is not equal to 200
   // print message to let user know and terminate app
-  if (error || response.statusCode < 200 || response.statusCode > 299) {
+  if (error || response.statusCode !== 200) {
     console.log("Something went wrong");
     return;
   }
